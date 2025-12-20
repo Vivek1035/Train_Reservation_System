@@ -5,6 +5,7 @@ import com.trainreservation.service.StationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class StationController {
     private final StationService stationService;
     
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Station> createStation(@RequestBody Station station) {
         Station createdStation = stationService.createStation(station);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdStation);
@@ -55,12 +57,14 @@ public class StationController {
     }
     
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Station> updateStation(@PathVariable Long id, @RequestBody Station station) {
         Station updatedStation = stationService.updateStation(id, station);
         return ResponseEntity.ok(updatedStation);
     }
     
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteStation(@PathVariable Long id) {
         stationService.deleteStation(id);
         return ResponseEntity.noContent().build();

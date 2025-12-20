@@ -170,10 +170,16 @@ public class DtoMapper {
     
     // User mappings
     public UserResponse toUserResponse(User user) {
+        String fullName = user.getFullName();
+        String firstName = fullName != null ? fullName.split(" ", 2)[0] : null;
+        String lastName = (fullName != null && fullName.contains(" "))
+        ? fullName.split(" ", 2)[1]
+        : null;
+
         return UserResponse.builder()
             .id(user.getId())
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
+            .firstName(firstName)
+            .lastName(lastName)
             .email(user.getEmail())
             .phoneNumber(user.getPhoneNumber())
             .address(user.getAddress())

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -135,6 +136,7 @@ public class TrainController {
      * POST /api/trains
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TrainResponse>> createTrain(
             @Valid @RequestBody TrainCreateRequest request) {
         
@@ -148,6 +150,7 @@ public class TrainController {
      * PATCH /api/trains/{id}/seats
      */
     @PatchMapping("/{id}/seats")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TrainResponse>> updateAvailableSeats(
             @PathVariable Long id, 
             @RequestParam Integer change) {
@@ -165,6 +168,7 @@ public class TrainController {
      * DELETE /api/trains/{id}
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteTrain(@PathVariable Long id) {
         trainService.deleteTrain(id);
         return ResponseEntity.ok(
