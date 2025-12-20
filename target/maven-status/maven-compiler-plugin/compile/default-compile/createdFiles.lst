@@ -16,12 +16,15 @@ com\trainreservation\entity\Seat.class
 com\trainreservation\service\TrainService.class
 com\trainreservation\controller\BookingController.class
 com\trainreservation\enums\CoachType.class
+com\trainreservation\dto\request\TrainCreateRequest$CoachCreateRequest.class
 com\trainreservation\exception\DuplicateResourceException.class
 com\trainreservation\exception\InvalidOperationException.class
 com\trainreservation\entity\Reservation.class
+com\trainreservation\dto\request\TrainCreateRequest$TrainCreateRequestBuilder.class
 com\trainreservation\enums\PaymentStatus.class
 com\trainreservation\repository\StationRepository.class
 com\trainreservation\controller\UserController.class
+com\trainreservation\dto\request\TrainCreateRequest.class
 com\trainreservation\exception\ResourceNotFoundException.class
 com\trainreservation\service\UserService.class
 com\trainreservation\service\impl\BookingServiceImpl.class
@@ -38,6 +41,7 @@ com\trainreservation\enums\BookingStatus.class
 com\trainreservation\entity\Coach$CoachBuilder.class
 com\trainreservation\controller\StationController.class
 com\trainreservation\entity\Seat$SeatBuilder.class
+com\trainreservation\dto\request\TrainCreateRequest$CoachCreateRequest$CoachCreateRequestBuilder.class
 com\trainreservation\entity\User.class
 com\trainreservation\repository\CoachRepository.class
 com\trainreservation\service\impl\UserServiceImpl.class
