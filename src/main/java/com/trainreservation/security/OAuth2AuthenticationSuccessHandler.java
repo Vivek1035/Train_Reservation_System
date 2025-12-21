@@ -46,9 +46,25 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String name = (String) attributes.get("name");
         String providerId = (String) attributes.get("sub"); // Google's user ID
         
+        // Split full name safely
+        String resolvedFirstName = "User";
+        String resolvedLastName = "";
+
+        if (name != null && !name.isBlank()) {
+            String[] parts = name.split(" ", 2);
+            resolvedFirstName = parts[0];
+            if (parts.length > 1) {
+                resolvedLastName = parts[1];
+            }
+        }
+
+        // Make them final (or effectively final)
+        final String firstName = resolvedFirstName;
+        final String lastName = resolvedLastName;
+
         // Find or create user
         User user = userRepository.findByEmail(email)
-                .orElseGet(() -> createOAuth2User(email, name, providerId));
+                .orElseGet(() -> createOAuth2User(email, firstName, lastName, providerId));
         
         // Generate JWT token
         String token = jwtUtil.generateToken(
@@ -60,7 +76,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
                 .queryParam("token", token)
                 .queryParam("email", user.getEmail())
-                .queryParam("name", user.getFullName())
+                .queryParam("firstName", user.getFirstName())
+                .queryParam("lastName", user.getLastName())
                 .build()
                 .toUriString();
         
@@ -70,9 +87,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     /**
      * Create new user from OAuth2 data
      */
-    private User createOAuth2User(String email, String name, String providerId) {
+    private User createOAuth2User(String email, String firstName, String lastName, String providerId) {
         User user = User.builder()
-                .fullName(name)
+                .firstName(firstName)
+                .lastName(lastName)
                 .email(email)
                 .password("") // No password for OAuth2 users
                 .role(UserRole.USER)

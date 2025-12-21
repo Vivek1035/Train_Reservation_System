@@ -49,7 +49,8 @@ public class AuthService {
 
         // Create new user
         User user = User.builder()
-                .fullName(request.getFullName())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
@@ -143,7 +144,8 @@ public class AuthService {
     private AuthResponse.UserInfo mapToUserInfo(User user) {
         return AuthResponse.UserInfo.builder()
                 .id(user.getId())
-                .fullName(user.getFullName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .role(user.getRole())

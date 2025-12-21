@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-TrainReservationApplication<TrainBook>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.trainreservation.TrainReservationApplication",
+            "projectName": "TrainBook",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -31,7 +31,8 @@ public class AuthResponse {
     @AllArgsConstructor
     public static class UserInfo {
         private Long id;
-        private String fullName;
+        private String firstName;
+        private String lastName;
         private String email;
         private String phoneNumber;
         private UserRole role;

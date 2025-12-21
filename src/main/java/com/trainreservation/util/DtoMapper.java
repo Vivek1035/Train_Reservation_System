@@ -170,24 +170,18 @@ public class DtoMapper {
     
     // User mappings
     public UserResponse toUserResponse(User user) {
-        String fullName = user.getFullName();
-        String firstName = fullName != null ? fullName.split(" ", 2)[0] : null;
-        String lastName = (fullName != null && fullName.contains(" "))
-        ? fullName.split(" ", 2)[1]
-        : null;
-
-        return UserResponse.builder()
-            .id(user.getId())
-            .firstName(firstName)
-            .lastName(lastName)
-            .email(user.getEmail())
-            .phoneNumber(user.getPhoneNumber())
-            .address(user.getAddress())
-            .role(user.getRole())
-            .active(user.getActive())
-            .createdAt(user.getCreatedAt())
-            .build();
-    }
+    return UserResponse.builder()
+        .id(user.getId())
+        .firstName(user.getFirstName())
+        .lastName(user.getLastName())
+        .email(user.getEmail())
+        .phoneNumber(user.getPhoneNumber())
+        .address(user.getAddress())
+        .role(user.getRole())
+        .active(user.getActive())
+        .createdAt(user.getCreatedAt())
+        .build();
+}
     
     // Utility methods
     private String calculateDuration(LocalTime departure, LocalTime arrival) {

@@ -82,6 +82,7 @@ public class SecurityConfig {
                         
                         // User endpoints (authenticated users)
                         .requestMatchers("/api/bookings/**").authenticated()
+                        .requestMatchers("/api/payments/**").authenticated()
                         
                         // All other requests require authentication
                         .anyRequest().authenticated()
