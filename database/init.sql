@@ -152,6 +152,250 @@ FROM coaches c, generate_series(1, 20)
 WHERE c.coach_number = 'A1'
 ON CONFLICT DO NOTHING;
 
+-- Insert sample seats (for coach A2)
+INSERT INTO seats (
+    coach_id, seat_number, available, quota_type,
+    is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth,
+    created_at, updated_at
+)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 4 = 1 OR generate_series % 4 = 0),
+    (generate_series % 4 = 2),
+    (generate_series % 3 = 1),
+    (generate_series % 3 = 0),
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 50)
+WHERE c.coach_number = 'A2'
+ON CONFLICT DO NOTHING;
+
+-- Insert sample seats (for coach A3)
+INSERT INTO seats (
+    coach_id, seat_number, available, quota_type,
+    is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth,
+    created_at, updated_at
+)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 4 = 1 OR generate_series % 4 = 0),
+    (generate_series % 4 = 2),
+    (generate_series % 3 = 1),
+    (generate_series % 3 = 0),
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 70)
+WHERE c.coach_number = 'A3'
+ON CONFLICT DO NOTHING;
+
+-- Coaches for Shatabdi
+INSERT INTO coaches (train_id, coach_number, coach_type, total_seats, available_seats, fare_multiplier, created_at)
+SELECT 
+    t.id,
+    'C1',
+    'CC',
+    40,
+    40,
+    1.2,
+    NOW()
+FROM trains t
+WHERE t.train_number = '12302'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO coaches (train_id, coach_number, coach_type, total_seats, available_seats, fare_multiplier, created_at)
+SELECT 
+    t.id,
+    'E1',
+    'EC',
+    40,
+    40,
+    1.2,
+    NOW()
+FROM trains t
+WHERE t.train_number = '12302'
+ON CONFLICT DO NOTHING;
+
+-- Seats for C1
+INSERT INTO seats (
+    coach_id, seat_number, available, quota_type,
+    is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth,
+    created_at, updated_at
+)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 2 = 0),
+    (generate_series % 2 = 1),
+    false,
+    false,
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 40)
+WHERE c.coach_number = 'C1'
+ON CONFLICT DO NOTHING;
+
+-- Seats for E1
+INSERT INTO seats (
+    coach_id, seat_number, available, quota_type,
+    is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth,
+    created_at, updated_at
+)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 2 = 0),
+    (generate_series % 2 = 1),
+    false,
+    false,
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 40)
+WHERE c.coach_number = 'E1'
+ON CONFLICT DO NOTHING;
+
+-- Insert sample coaches (for train 12303 - Duronto Express)
+INSERT INTO coaches (train_id, coach_number, coach_type, total_seats, available_seats, fare_multiplier, created_at)
+SELECT 
+    t.id,
+    'A1',
+    'AC_1A',
+    50,
+    50,
+    3.0,
+    NOW()
+FROM trains t
+WHERE t.train_number = '12303'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO coaches (train_id, coach_number, coach_type, total_seats, available_seats, fare_multiplier, created_at)
+SELECT 
+    t.id,
+    'A2',
+    'AC_2A',
+    50,
+    50,
+    2.0,
+    NOW()
+FROM trains t
+WHERE t.train_number = '12303'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO coaches (train_id, coach_number, coach_type, total_seats, available_seats, fare_multiplier, created_at)
+SELECT 
+    t.id,
+    'B1',
+    'AC_3A',
+    70,
+    70,
+    1.5,
+    NOW()
+FROM trains t
+WHERE t.train_number = '12303'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO coaches (train_id, coach_number, coach_type, total_seats, available_seats, fare_multiplier, created_at)
+SELECT 
+    t.id,
+    'S1',
+    'SL',
+    70,
+    70,
+    1.5,
+    NOW()
+FROM trains t
+WHERE t.train_number = '12303'
+ON CONFLICT DO NOTHING;
+
+-- Insert sample seats (for coach A1)
+INSERT INTO seats (coach_id, seat_number, available, quota_type, is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth, created_at, updated_at)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 4 = 1 OR generate_series % 4 = 0),
+    (generate_series % 4 = 2),
+    (generate_series % 3 = 1),
+    (generate_series % 3 = 0),
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 20)
+WHERE c.coach_number = 'A1'
+ON CONFLICT DO NOTHING;
+
+-- Insert sample seats (for coach A2)
+INSERT INTO seats (
+    coach_id, seat_number, available, quota_type,
+    is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth,
+    created_at, updated_at
+)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 4 = 1 OR generate_series % 4 = 0),
+    (generate_series % 4 = 2),
+    (generate_series % 3 = 1),
+    (generate_series % 3 = 0),
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 50)
+WHERE c.coach_number = 'A2'
+ON CONFLICT DO NOTHING;
+
+-- Insert sample seats (for coach A3)
+INSERT INTO seats (
+    coach_id, seat_number, available, quota_type,
+    is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth,
+    created_at, updated_at
+)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 4 = 1 OR generate_series % 4 = 0),
+    (generate_series % 4 = 2),
+    (generate_series % 3 = 1),
+    (generate_series % 3 = 0),
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 70)
+WHERE c.coach_number = 'B1'
+ON CONFLICT DO NOTHING;
+
+-- Insert sample seats (for coach )
+INSERT INTO seats (
+    coach_id, seat_number, available, quota_type,
+    is_window_seat, is_aisle_seat, is_lower_berth, is_upper_berth,
+    created_at, updated_at
+)
+SELECT 
+    c.id,
+    generate_series::text,
+    true,
+    'GENERAL',
+    (generate_series % 4 = 1 OR generate_series % 4 = 0),
+    (generate_series % 4 = 2),
+    (generate_series % 3 = 1),
+    (generate_series % 3 = 0),
+    NOW(),
+    NOW()
+FROM coaches c, generate_series(1, 70)
+WHERE c.coach_number = 'S1'
+ON CONFLICT DO NOTHING;
+
 -- Verify data
 SELECT 'Stations' as table_name, COUNT(*) as count FROM stations
 UNION ALL
