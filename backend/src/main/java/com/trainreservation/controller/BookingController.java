@@ -30,177 +30,179 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingController {
 
-    private final BookingService bookingService;
-    private final DtoMapper dtoMapper;
+        private final BookingService bookingService;
+        private final DtoMapper dtoMapper;
 
-    /**
-     * Create new booking
-     * POST /api/bookings
-     */
-    @PostMapping
-    public ResponseEntity<ApiResponse<BookingResponse>> createBooking(
-        @Valid @RequestBody BookingCreateRequest request) {
+        /**
+         * Create new booking
+         * POST /api/bookings
+         */
+        @PostMapping
+        public ResponseEntity<ApiResponse<BookingResponse>> createBooking(
+                        @Valid @RequestBody BookingCreateRequest request) {
 
-        Booking booking = bookingService.createBooking(request);
+                Booking booking = bookingService.createBooking(request);
 
-        BookingResponse response = dtoMapper.toBookingResponse(booking);
+                BookingResponse response = dtoMapper.toBookingResponse(booking);
 
-        return ResponseEntity.ok(
-                ApiResponse.success("Booking created successfully", response));
-    }
+                return ResponseEntity.ok(
+                                ApiResponse.success("Booking created successfully", response));
+        }
 
-    /**
-     * Get booking by ID
-     * GET /api/bookings/{id}
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<BookingResponse>> getBookingById(@PathVariable Long id) {
-        Booking booking = bookingService.getBookingById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking", "id", id));
+        /**
+         * Get booking by ID
+         * GET /api/bookings/{id}
+         */
+        @GetMapping("/{id}")
+        public ResponseEntity<ApiResponse<BookingResponse>> getBookingById(@PathVariable("id") Long id) {
+                Booking booking = bookingService.getBookingById(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Booking", "id", id));
 
-        BookingResponse response = dtoMapper.toBookingResponse(booking);
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
+                BookingResponse response = dtoMapper.toBookingResponse(booking);
+                return ResponseEntity.ok(ApiResponse.success(response));
+        }
 
-    /**
-     * Get booking by PNR number
-     * GET /api/bookings/pnr/{pnr}
-     */
-    @GetMapping("/pnr/{pnr}")
-    public ResponseEntity<ApiResponse<BookingResponse>> getBookingByPnr(@PathVariable String pnr) {
-        Booking booking = bookingService.getBookingByPnr(pnr)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking", "PNR", pnr));
+        /**
+         * Get booking by PNR number
+         * GET /api/bookings/pnr/{pnr}
+         */
+        @GetMapping("/pnr/{pnr}")
+        public ResponseEntity<ApiResponse<BookingResponse>> getBookingByPnr(@PathVariable("pnr") String pnr) {
+                Booking booking = bookingService.getBookingByPnr(pnr)
+                                .orElseThrow(() -> new ResourceNotFoundException("Booking", "PNR", pnr));
 
-        BookingResponse response = dtoMapper.toBookingResponse(booking);
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
+                BookingResponse response = dtoMapper.toBookingResponse(booking);
+                return ResponseEntity.ok(ApiResponse.success(response));
+        }
 
-    /**
-     * Get user booking history
-     * GET /api/bookings/user/{userId}/history?page=0&size=10
-     */
-    @GetMapping("/user/{userId}/history")
-    public ResponseEntity<ApiResponse<PageResponse<BookingHistoryResponse>>> getUserBookingHistory(
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+        /**
+         * Get user booking history
+         * GET /api/bookings/user/{userId}/history?page=0&size=10
+         */
+        @GetMapping("/user/{userId}/history")
+        public ResponseEntity<ApiResponse<PageResponse<BookingHistoryResponse>>> getUserBookingHistory(
+                        @PathVariable("userId") Long userId,
+                        @RequestParam(name = "page", defaultValue = "0") int page,
+                        @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        List<Booking> bookings = bookingService.getBookingsByUserId(userId);
+                List<Booking> bookings = bookingService.getBookingsByUserId(userId);
 
-        // Sort by booking date descending (most recent first)
-        bookings.sort((b1, b2) -> b2.getCreatedAt().compareTo(b1.getCreatedAt()));
+                // Sort by booking date descending (most recent first)
+                bookings.sort((b1, b2) -> b2.getCreatedAt().compareTo(b1.getCreatedAt()));
 
-        List<BookingHistoryResponse> historyResponses = bookings.stream()
-                .map(dtoMapper::toBookingHistoryResponse)
-                .collect(Collectors.toList());
+                List<BookingHistoryResponse> historyResponses = bookings.stream()
+                                .map(dtoMapper::toBookingHistoryResponse)
+                                .collect(Collectors.toList());
 
-        // Simple pagination
-        int start = page * size;
-        int end = Math.min(start + size, historyResponses.size());
-        List<BookingHistoryResponse> pagedContent = start < historyResponses.size()
-                ? historyResponses.subList(start, end)
-                : List.of();
+                // Simple pagination
+                int start = page * size;
+                int end = Math.min(start + size, historyResponses.size());
+                List<BookingHistoryResponse> pagedContent = start < historyResponses.size()
+                                ? historyResponses.subList(start, end)
+                                : List.of();
 
-        PageResponse<BookingHistoryResponse> pageResponse = PageResponse.<BookingHistoryResponse>builder()
-                .content(pagedContent)
-                .pageNumber(page)
-                .pageSize(size)
-                .totalElements(historyResponses.size())
-                .totalPages((int) Math.ceil((double) historyResponses.size() / size))
-                .first(page == 0)
-                .last(end >= historyResponses.size())
-                .empty(pagedContent.isEmpty())
-                .build();
+                PageResponse<BookingHistoryResponse> pageResponse = PageResponse.<BookingHistoryResponse>builder()
+                                .content(pagedContent)
+                                .pageNumber(page)
+                                .pageSize(size)
+                                .totalElements(historyResponses.size())
+                                .totalPages((int) Math.ceil((double) historyResponses.size() / size))
+                                .first(page == 0)
+                                .last(end >= historyResponses.size())
+                                .empty(pagedContent.isEmpty())
+                                .build();
 
-        return ResponseEntity.ok(ApiResponse.success(pageResponse));
-    }
+                return ResponseEntity.ok(ApiResponse.success(pageResponse));
+        }
 
-    /**
-     * Get user's active bookings (upcoming journeys)
-     * GET /api/bookings/user/{userId}/active
-     */
-    @GetMapping("/user/{userId}/active")
-    public ResponseEntity<ApiResponse<List<BookingHistoryResponse>>> getUserActiveBookings(
-            @PathVariable Long userId) {
+        /**
+         * Get user's active bookings (upcoming journeys)
+         * GET /api/bookings/user/{userId}/active
+         */
+        @GetMapping("/user/{userId}/active")
+        public ResponseEntity<ApiResponse<List<BookingHistoryResponse>>> getUserActiveBookings(
+                        @PathVariable("userId") Long userId) {
 
-        List<Booking> bookings = bookingService.getBookingsByUserId(userId);
+                List<Booking> bookings = bookingService.getBookingsByUserId(userId);
 
-        // Filter only future bookings with confirmed/pending status
-        List<BookingHistoryResponse> activeBookings = bookings.stream()
-                .filter(b -> b.getJourneyDate().isAfter(LocalDate.now()) ||
-                        b.getJourneyDate().equals(LocalDate.now()))
-                .filter(b -> b.getStatus() == BookingStatus.CONFIRMED ||
-                        b.getStatus() == BookingStatus.PENDING)
-                .map(dtoMapper::toBookingHistoryResponse)
-                .sorted((b1, b2) -> b1.getJourneyDate().compareTo(b2.getJourneyDate()))
-                .collect(Collectors.toList());
+                // Filter only future bookings with confirmed/pending status
+                List<BookingHistoryResponse> activeBookings = bookings.stream()
+                                .filter(b -> b.getJourneyDate().isAfter(LocalDate.now()) ||
+                                                b.getJourneyDate().equals(LocalDate.now()))
+                                .filter(b -> b.getStatus() == BookingStatus.CONFIRMED ||
+                                                b.getStatus() == BookingStatus.PENDING)
+                                .map(dtoMapper::toBookingHistoryResponse)
+                                .sorted((b1, b2) -> b1.getJourneyDate().compareTo(b2.getJourneyDate()))
+                                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(
-                ApiResponse.success("Found " + activeBookings.size() + " active bookings", activeBookings));
-    }
+                return ResponseEntity.ok(
+                                ApiResponse.success("Found " + activeBookings.size() + " active bookings",
+                                                activeBookings));
+        }
 
-    /**
-     * Get bookings by status
-     * GET /api/bookings/status/{status}?page=0&size=20
-     */
-    @GetMapping("/status/{status}")
-    public ResponseEntity<ApiResponse<List<BookingResponse>>> getBookingsByStatus(
-            @PathVariable BookingStatus status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+        /**
+         * Get bookings by status
+         * GET /api/bookings/status/{status}?page=0&size=20
+         */
+        @GetMapping("/status/{status}")
+        public ResponseEntity<ApiResponse<List<BookingResponse>>> getBookingsByStatus(
+                        @PathVariable("status") BookingStatus status,
+                        @RequestParam(name = "page", defaultValue = "0") int page,
+                        @RequestParam(name = "size", defaultValue = "20") int size) {
 
-        List<Booking> bookings = bookingService.getBookingsByStatus(status);
+                List<Booking> bookings = bookingService.getBookingsByStatus(status);
 
-        List<BookingResponse> responses = bookings.stream()
-                .map(dtoMapper::toBookingResponse)
-                .collect(Collectors.toList());
+                List<BookingResponse> responses = bookings.stream()
+                                .map(dtoMapper::toBookingResponse)
+                                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(
-                ApiResponse.success("Found " + responses.size() + " bookings with status: " + status, responses));
-    }
+                return ResponseEntity.ok(
+                                ApiResponse.success("Found " + responses.size() + " bookings with status: " + status,
+                                                responses));
+        }
 
-    /**
-     * Cancel booking
-     * PATCH /api/bookings/{id}/cancel
-     */
-    @PatchMapping("/{id}/cancel")
-    public ResponseEntity<ApiResponse<BookingResponse>> cancelBooking(@PathVariable Long id) {
-        Booking cancelledBooking = bookingService.cancelBooking(id);
-        BookingResponse response = dtoMapper.toBookingResponse(cancelledBooking);
+        /**
+         * Cancel booking
+         * PATCH /api/bookings/{id}/cancel
+         */
+        @PatchMapping("/{id}/cancel")
+        public ResponseEntity<ApiResponse<BookingResponse>> cancelBooking(@PathVariable("id") Long id) {
+                Booking cancelledBooking = bookingService.cancelBooking(id);
+                BookingResponse response = dtoMapper.toBookingResponse(cancelledBooking);
 
-        return ResponseEntity.ok(
-                ApiResponse.success("Booking cancelled successfully", response));
-    }
+                return ResponseEntity.ok(
+                                ApiResponse.success("Booking cancelled successfully", response));
+        }
 
-    /**
-     * Confirm booking (admin/payment gateway)
-     * PATCH /api/bookings/{id}/confirm
-     */
-    @PatchMapping("/{id}/confirm")
-    public ResponseEntity<ApiResponse<BookingResponse>> confirmBooking(@PathVariable Long id) {
-        Booking confirmedBooking = bookingService.confirmBooking(id);
-        BookingResponse response = dtoMapper.toBookingResponse(confirmedBooking);
+        /**
+         * Confirm booking (admin/payment gateway)
+         * PATCH /api/bookings/{id}/confirm
+         */
+        @PatchMapping("/{id}/confirm")
+        public ResponseEntity<ApiResponse<BookingResponse>> confirmBooking(@PathVariable("id") Long id) {
+                Booking confirmedBooking = bookingService.confirmBooking(id);
+                BookingResponse response = dtoMapper.toBookingResponse(confirmedBooking);
 
-        return ResponseEntity.ok(
-                ApiResponse.success("Booking confirmed successfully", response));
-    }
+                return ResponseEntity.ok(
+                                ApiResponse.success("Booking confirmed successfully", response));
+        }
 
-    /**
-     * Admin: Get all bookings for a train on a specific date
-     * GET /api/bookings/train/{trainId}/date/{date}
-     */
-    @GetMapping("/train/{trainId}/date/{date}")
-    public ResponseEntity<ApiResponse<List<BookingResponse>>> getBookingsForTrainOnDate(
-            @PathVariable Long trainId,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        /**
+         * Admin: Get all bookings for a train on a specific date
+         * GET /api/bookings/train/{trainId}/date/{date}
+         */
+        @GetMapping("/train/{trainId}/date/{date}")
+        public ResponseEntity<ApiResponse<List<BookingResponse>>> getBookingsForTrainOnDate(
+                        @PathVariable("trainId") Long trainId,
+                        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        List<Booking> bookings = bookingService.getBookingsForTrainOnDate(trainId, date);
+                List<Booking> bookings = bookingService.getBookingsForTrainOnDate(trainId, date);
 
-        List<BookingResponse> responses = bookings.stream()
-                .map(dtoMapper::toBookingResponse)
-                .collect(Collectors.toList());
+                List<BookingResponse> responses = bookings.stream()
+                                .map(dtoMapper::toBookingResponse)
+                                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(
-                ApiResponse.success("Found " + responses.size() + " bookings", responses));
-    }
+                return ResponseEntity.ok(
+                                ApiResponse.success("Found " + responses.size() + " bookings", responses));
+        }
 }

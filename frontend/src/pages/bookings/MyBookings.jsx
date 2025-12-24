@@ -26,8 +26,8 @@ const MyBookings = () => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const data = await bookingService.getUserBookings(user.id);
-      setBookings(data);
+      const response = await bookingService.getUserBookings(user.id);
+      setBookings(response.data?.content || []);
     } catch (err) {
       console.error('Error fetching bookings:', err);
       setError('Failed to load bookings');
@@ -118,7 +118,7 @@ const MyBookings = () => {
                       <div className="flex items-center gap-2">
                         <Train size={16} />
                         <span>
-                          {booking.train?.trainNumber} - {booking.train?.trainName}
+                          {booking.trainNumber} - {booking.trainName}
                         </span>
                       </div>
 
@@ -130,13 +130,13 @@ const MyBookings = () => {
                       <div className="flex items-center gap-2">
                         <MapPin size={16} />
                         <span>
-                          {booking.sourceStation?.name} → {booking.destinationStation?.name}
+                          {booking.route}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Users size={16} />
-                        <span>{booking.numberOfSeats} Seat(s)</span>
+                        <span>{booking.numberOfPassengers} Seat(s)</span>
                       </div>
                     </div>
 
@@ -148,15 +148,6 @@ const MyBookings = () => {
                         </span>
                       </div>
                     </div>
-
-                    {booking.seats && booking.seats.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-600">
-                          Seats:{' '}
-                          {booking.seats.map((s) => s.seatNumber).join(', ')}
-                        </p>
-                      </div>
-                    )}
                   </div>
 
                   <div className="flex flex-col gap-2">

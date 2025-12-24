@@ -22,10 +22,16 @@ public class BookingResponse {
     private String pnrNumber;
     private BookingStatus status;
     private LocalDate journeyDate;
+
     private Integer numberOfPassengers;
     private BigDecimal totalFare;
+    
     private String remarks;
     private LocalDateTime bookedAt;
+    private String trainNumber;
+    private String trainName;
+    private String route;
+
     
     // Train details
     private TrainBasicInfo train;

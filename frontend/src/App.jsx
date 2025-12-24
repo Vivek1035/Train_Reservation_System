@@ -13,6 +13,7 @@ import SearchTrains from './pages/trains/SearchTrains';
 import SeatSelection from './pages/trains/SeatSelection';
 import Payment from './pages/payment/Payment';
 import MyBookings from './pages/bookings/MyBookings';
+import BookingDetails from './pages/bookings/BookingDetails';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageTrains from './pages/admin/ManageTrains';
 
@@ -60,6 +61,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <MyBookings />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/bookings/:bookingId"
+                element={
+                  <ProtectedRoute>
+                    <BookingDetails />
                   </ProtectedRoute>
                 }
               />

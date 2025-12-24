@@ -17,9 +17,10 @@ export const bookingService = {
 
   // Get bookings by user ID
   getUserBookings: async (userId, params) => {
-    const response = await api.get(`${BOOKING_URL}/user/${userId}`, { params });
-    return response.data;
-  },
+  const response = await api.get(`${BOOKING_URL}/user/${userId}/history`,{ params } );
+  return response.data;
+},
+
 
   // Get booking by PNR
   getBookingByPnr: async (pnr) => {
